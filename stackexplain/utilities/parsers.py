@@ -1,3 +1,4 @@
+# Standard library
 import re
 
 
@@ -37,7 +38,10 @@ def get_code_exec_command(args, language):
 
 
 def get_error_message(error, language):
-    """Filters the stack trace from stderr and returns only the error message."""
+    """
+    Filters the stack trace from stderr and returns only the error message.
+    """
+
     if error == '' or error is None:
         return None
     elif language == "python3":

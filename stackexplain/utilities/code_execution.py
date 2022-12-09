@@ -1,8 +1,10 @@
+# Standard library
 import os
 from queue import Queue
 from subprocess import PIPE, Popen
 from threading import Thread
 
+# Local
 from utilities.parsers import get_code_exec_command, get_error_message
 
 
@@ -28,6 +30,7 @@ def write(get):
     Pulls output from shared queue and prints to terminal.
     """
 
+    print()
     for line in iter(get, None):
         line = line.replace("\n", "")
         print(line)

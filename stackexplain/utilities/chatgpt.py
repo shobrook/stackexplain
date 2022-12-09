@@ -1,7 +1,14 @@
+# Standard library
+import json
+import os.path as path
+
+# Third party
 from revChatGPT.revChatGPT import Chatbot
 
-# TEMP: Have user fill this out
-config = {}
+# Local
+from utilities.printers import prompt_user_for_credentials
+
+CONFIG_FP = path.join(path.expanduser("~"), ".stackexplain.json")
 
 
 #########
@@ -10,11 +17,11 @@ config = {}
 
 
 def construct_query(language, error_message):
+    # TODO: Create an class for mapping languages to exec commands
     language = "java" if language == "javac" else language
     language = "python" if language == "python3" else language
     language = "go" if language == "go run" else language
 
-    # TODO: Create an enum for mapping languages to exec commands
     query = f"Explain this {language} error message in brief and simple terms:"
     query += "\n```"
     query += f"\n{error_message}"
@@ -29,14 +36,19 @@ def construct_query(language, error_message):
 
 
 def is_user_registered():
-    return True # TODO
+    return path.exists(CONFIG_FP)
 
 
 def register_openai_credentials():
-    pass # TODO
+    email, password = prompt_user_for_credentials()
+    config = {"email": email, "password": password}
+
+    with open(CONFIG_FP, "w") as config_file:
+        json.dump(config, config_file)
 
 
 def get_chatgpt_explanation(language, error_message):
+    config = json.load(open(CONFIG_FP))
     query = construct_query(language, error_message)
-    chatbot = Chatbot(config, conversation_id=None)
-    return chatbot.get_chat_response(query)["message"].strip()
+    chatbot = Chatbot(config)
+    return chatbot.get_chat_response(query).strip()

@@ -1,3 +1,4 @@
+# Standard library
 import sys
 from itertools import cycle
 from shutil import get_terminal_size
@@ -5,24 +6,41 @@ from threading import Thread
 from time import sleep
 from random import random
 
+# Third party
+from pygments import highlight
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters import Terminal256Formatter
+
+CODE_IDENTIFIER = "```"
+CODE_INDENT = "    "
+
 # ASCII color codes
-GREEN = '\033[92m'
-GRAY = '\033[90m'
-CYAN = '\033[36m'
-RED = '\033[31m'
-YELLOW = '\033[33m'
-END = '\033[0m'
-UNDERLINE = '\033[4m'
-BOLD = '\033[1m'
+GREEN = "\033[92m"
+GRAY = "\033[90m"
+CYAN = "\033[36m"
+RED = "\033[31m"
+YELLOW = "\033[33m"
+END = "\033[0m"
+UNDERLINE = "\033[4m"
+BOLD = "\033[1m"
+
+
+#########
+# HELPERS
+#########
+
+
+def slow_print(text, delay=0.01):
+    for word in text:
+        sys.stdout.write(word)
+        sys.stdout.flush() # Defeat buffering
+
+        sleep(delay)
 
 
 ######
 # MAIN
 ######
-
-
-def register_openai_credentials():
-    pass # TODO
 
 
 def print_help_message():
@@ -32,6 +50,14 @@ def print_help_message():
 def print_invalid_language_message():
     # TODO: Colorize this better
     print(f"\n{RED}Sorry, stackexplain doesn't support this file type.\n{END}")
+
+
+def prompt_user_for_credentials():
+    print(f"{BOLD}Please enter your OpenAI credentials.{END}\n")
+    email = input("Email address: ")
+    password = input("Password: ")
+
+    return email, password
 
 
 class LoadingMessage:
@@ -46,8 +72,8 @@ class LoadingMessage:
         """
 
         self.steps = ["⢿", "⣻", "⣽", "⣾", "⣷", "⣯", "⣟", "⡿"]
-        self.message = "Asking ChatGPT to explain your error"
-        # self.end = ""
+        self.message = f"{BOLD}{CYAN}Asking ChatGPT to explain your error{END}"
+        self.end = f"{BOLD}{CYAN}🤖 ChatGPT's Explanation:{END}"
         self.timeout = timeout
 
         self._thread = Thread(target=self._animate, daemon=True)
@@ -61,15 +87,15 @@ class LoadingMessage:
         self.done = True
         cols = get_terminal_size((80, 20)).columns
 
-        print("\r" + " " * cols, end="", flush=True)
-        # print(f"\r{self.end}", flush=True)
+        print(f"\r{' ' * cols}", end="", flush=True)
+        print(f"\r{self.end}\n", flush=True)
 
     def _animate(self):
         for step in cycle(self.steps):
             if self.done:
                 break
 
-            print(f"\r{step} {self.message}", flush=True, end="")
+            print(f"\r{CYAN}{step}{END} {self.message}", flush=True, end="")
 
             sleep(self.timeout)
 
@@ -77,12 +103,24 @@ class LoadingMessage:
         self.start()
 
     def __exit__(self, exc_type, exc_value, tb):
-        # handle exceptions with those variables ^
         self.stop()
 
 
 def print_error_explanation(explanation):
-    for word in f"{explanation}\n":
-        sys.stdout.write(word)
-        sys.stdout.flush() # Defeat buffering
-        sleep(0.01)
+    for i, text in enumerate(explanation.split(CODE_IDENTIFIER)):
+        if not i % 2:
+            # TODO: Handle bolds
+            slow_print(text)
+
+            continue
+
+        code = highlight(
+            text,
+            lexer=get_lexer_by_name("python"),
+            formatter=Terminal256Formatter(style="solarized-dark")
+        )
+        for line in code.strip().split("\n"):
+            slow_print(f"{CODE_INDENT}{line}", delay=0.001)
+            print()
+
+    print("\n")

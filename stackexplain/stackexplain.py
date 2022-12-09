@@ -1,9 +1,16 @@
+# Standard library
 import sys
 
+# Local
 import utilities.chatgpt as gpt
 import utilities.parsers as parsers
 import utilities.printers as printers
 import utilities.code_execution as code_exec
+
+
+######
+# MAIN
+######
 
 
 def main():
@@ -30,8 +37,8 @@ def main():
     print()
 
     with printers.LoadingMessage(): # Context-based loading message
+        import time
+        time.sleep(3)
         explanation = gpt.get_chatgpt_explanation(language, error_message)
-
-    # TODO: Add syntax highlighting to code
 
     printers.print_error_explanation(explanation)
