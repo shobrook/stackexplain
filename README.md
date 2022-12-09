@@ -6,8 +6,6 @@ Automatically explain your error messages in plain English using ChatGPT. Just r
 
 ## Installation
 
->Requires Python 3.0 or higher.
-
 You can install StackExplain with pip:
 
 `$ pip3 install stackexplain`
