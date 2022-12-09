@@ -1,5 +1,5 @@
 # Local
-from stackexplain import main
+from stackexplain.stackexplain import main
 
 
 if __name__ == "__main__":

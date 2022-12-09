@@ -5,7 +5,10 @@ from subprocess import PIPE, Popen
 from threading import Thread
 
 # Local
-from utilities.parsers import get_code_exec_command, get_error_message
+from stackexplain.utilities.parsers import get_code_exec_command, get_error_message
+
+GRAY = "\033[37m"
+END = "\033[0m"
 
 
 #########
@@ -33,7 +36,7 @@ def write(get):
     print()
     for line in iter(get, None):
         line = line.replace("\n", "")
-        print(line)
+        print(f"{GRAY}{line}{END}")
 
 
 ######

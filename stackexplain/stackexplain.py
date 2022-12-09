@@ -2,10 +2,10 @@
 import sys
 
 # Local
-import utilities.chatgpt as gpt
-import utilities.parsers as parsers
-import utilities.printers as printers
-import utilities.code_execution as code_exec
+import stackexplain.utilities.chatgpt as gpt
+import stackexplain.utilities.parsers as parsers
+import stackexplain.utilities.printers as printers
+import stackexplain.utilities.code_execution as code_exec
 
 
 ######
@@ -14,9 +14,6 @@ import utilities.code_execution as code_exec
 
 
 def main():
-    # TODO: Check if local config file is populated
-    # If not, prompt user to enter OpenAI credentials
-
     args = sys.argv
     if len(args) == 1 or args[1].lower() in ("-h", "--help"):
         printers.print_help_message()
@@ -36,9 +33,7 @@ def main():
 
     print()
 
-    with printers.LoadingMessage(): # Context-based loading message
-        import time
-        time.sleep(3)
+    with printers.LoadingMessage():
         explanation = gpt.get_chatgpt_explanation(language, error_message)
 
     printers.print_error_explanation(explanation)

@@ -6,7 +6,7 @@ import os.path as path
 from revChatGPT.revChatGPT import Chatbot
 
 # Local
-from utilities.printers import prompt_user_for_credentials
+from stackexplain.utilities.printers import prompt_user_for_credentials
 
 CONFIG_FP = path.join(path.expanduser("~"), ".stackexplain.json")
 
@@ -51,4 +51,4 @@ def get_chatgpt_explanation(language, error_message):
     config = json.load(open(CONFIG_FP))
     query = construct_query(language, error_message)
     chatbot = Chatbot(config)
-    return chatbot.get_chat_response(query).strip()
+    return chatbot.get_chat_response(query)["message"].strip()
