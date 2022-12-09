@@ -1,7 +1,9 @@
+import sys
 from itertools import cycle
 from shutil import get_terminal_size
 from threading import Thread
 from time import sleep
+from random import random
 
 # ASCII color codes
 GREEN = '\033[92m'
@@ -77,3 +79,10 @@ class LoadingMessage:
     def __exit__(self, exc_type, exc_value, tb):
         # handle exceptions with those variables ^
         self.stop()
+
+
+def print_error_explanation(explanation):
+    for word in f"{explanation}\n":
+        sys.stdout.write(word)
+        sys.stdout.flush() # Defeat buffering
+        sleep(0.01)

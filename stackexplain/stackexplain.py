@@ -29,9 +29,9 @@ def main():
 
     print()
 
-    with printers.LoadingMessage():
+    with printers.LoadingMessage(): # Context-based loading message
         explanation = gpt.get_chatgpt_explanation(language, error_message)
 
     # TODO: Add syntax highlighting to code
-    # TODO: Print word-by-word
-    print(explanation)
+
+    printers.print_error_explanation(explanation)
