@@ -1,12 +1,12 @@
 # StackExplain
 
-Automatically explain your error messages in plain English using ChatGPT. Just run your file with the `stackexplain` command.
+Explain your error message in plain English using ChatGPT. Just run your file with the `stackexplain` command.
 
 ![Demo](demo.gif)
 
 ## Installation
 
-You can install StackExplain with pip:
+You can install `stackexplain` with pip:
 
 `$ pip3 install stackexplain`
 
