@@ -1,10 +1,10 @@
 # Standard library
 import sys
+import re
 from itertools import cycle
 from shutil import get_terminal_size
 from threading import Thread
 from time import sleep
-from random import random
 
 # Third party
 from pygments import highlight
@@ -15,19 +15,27 @@ CODE_IDENTIFIER = "```"
 CODE_INDENT = "    "
 
 # ASCII color codes
-GREEN = "\033[92m"
-GRAY = "\033[90m"
 CYAN = "\033[36m"
 RED = "\033[31m"
-YELLOW = "\033[33m"
 END = "\033[0m"
-UNDERLINE = "\033[4m"
 BOLD = "\033[1m"
+UNDERLINE = "\033[4m"
+
+INLINE_BY_STAR_IDENTIFIER = "\*(.*?)\*"
+INLINE_BY_DASH_IDENTIFIER = "`(.*?)`"
 
 
 #########
 # HELPERS
 #########
+
+
+def handle_inline_code(text):
+    replacer = lambda s: f"{BOLD}{s.group()}{END}"
+    text = re.sub(INLINE_BY_STAR_IDENTIFIER, replacer, text)
+    text = re.sub(INLINE_BY_DASH_IDENTIFIER, replacer, text)
+
+    return text
 
 
 def slow_print(text, delay=0.01):
@@ -38,18 +46,35 @@ def slow_print(text, delay=0.01):
         sleep(delay)
 
 
+def slow_print_code(text, delay=0.0025):
+    code = highlight(
+        text,
+        lexer=get_lexer_by_name("python"),
+        formatter=Terminal256Formatter(style="gruvbox-dark")
+    )
+    for line in code.strip().split("\n"):
+        slow_print(f"{CODE_INDENT}{line}", delay)
+        print()
+
+
 ######
 # MAIN
 ######
 
 
 def print_help_message():
-    pass # TODO
+    """
+    Prints usage instructions.
+    """
+
+    print(f"{BOLD}StackExplain – Made by @shobrook{END}")
+    print("Command-line tool that automatically explains your error message using ChatGPT.")
+    print(f"\n\n{UNDERLINE}Usage:{END} $ stackexplain {CYAN}[file_name]{END}")
+    print(f"\n$ python3 {CYAN}test.py{END}   =>   $ stackexplain {CYAN}test.py{END}")
 
 
 def print_invalid_language_message():
-    # TODO: Colorize this better
-    print(f"\n{RED}Sorry, stackexplain doesn't support this file type.\n{END}")
+    print(f"\n{RED}Sorry, StackExplain doesn't support this file type.\n{END}")
 
 
 def prompt_user_for_credentials():
@@ -71,7 +96,8 @@ class LoadingMessage:
             timeout (float, optional): Sleep time between prints. Defaults to 0.1.
         """
 
-        self.steps = ["⢿", "⣻", "⣽", "⣾", "⣷", "⣯", "⣟", "⡿"]
+        # self.steps = ["⢿", "⣻", "⣽", "⣾", "⣷", "⣯", "⣟", "⡿"]
+        self.steps = ['-', '/', '|', '\\']
         self.message = f"{BOLD}{CYAN}Asking ChatGPT to explain your error{END}"
         self.end = f"{BOLD}{CYAN}🤖 ChatGPT's Explanation:{END}"
         self.timeout = timeout
@@ -109,18 +135,11 @@ class LoadingMessage:
 def print_error_explanation(explanation):
     for i, text in enumerate(explanation.split(CODE_IDENTIFIER)):
         if not i % 2:
-            # TODO: Handle bolds
+            text = handle_inline_code(text)
             slow_print(text)
 
             continue
 
-        code = highlight(
-            text,
-            lexer=get_lexer_by_name("python"),
-            formatter=Terminal256Formatter(style="solarized-dark")
-        )
-        for line in code.strip().split("\n"):
-            slow_print(f"{CODE_INDENT}{line}", delay=0.001)
-            print()
+        slow_print_code(text)
 
     print("\n")
