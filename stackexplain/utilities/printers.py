@@ -67,10 +67,11 @@ def print_help_message():
     Prints usage instructions.
     """
 
-    print(f"{BOLD}StackExplain – Made by @shobrook{END}")
+    print(f"{BOLD}StackExplain – Made by Jinsku Kripta{END}")
     print("Command-line tool that automatically explains your error message using ChatGPT.")
     print(f"\n\n{UNDERLINE}Usage:{END} $ stackexplain {CYAN}[file_name]{END}")
     print(f"\n$ python3 {CYAN}test.py{END}   =>   $ stackexplain {CYAN}test.py{END}")
+    print("Use => stackexplain -credentials to modify the credentials")
 
 
 def print_invalid_language_message():
