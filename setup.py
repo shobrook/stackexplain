@@ -7,11 +7,10 @@ if sys.version_info[:3] < (3, 0, 0):
 
 setup(
     name="stackexplain",
-    version="1.5.0",
+    version="1.5.1",
     description="Command-line tool that automatically explains your error message using ChatGPT",
-    url="https://github.com/shobrook/stackexplain",
-    author="shobrook",
-    author_email="shobrookj@gmail.com",
+    url="https://github.com/Kripta-Studios/stackexplain",
+    author="Kripta-Studios",
     classifiers=[
         "Environment :: Console",
         "Intended Audience :: Developers",

@@ -19,6 +19,10 @@ def main():
         printers.print_help_message()
         return
 
+    if len(args) == 2 and args[1].lower() in ("-credentials", "--change-credentials"):
+        gpt.register_openai_credentials()
+        return
+    
     language = parsers.get_language(args)
     if not language:
         printers.print_invalid_language_message()
