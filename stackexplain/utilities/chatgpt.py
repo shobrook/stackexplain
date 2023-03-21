@@ -3,7 +3,7 @@ import json
 import os.path as path
 
 # Third party
-from revChatGPT.revChatGPT import Chatbot
+from revChatGPT.V3 import Chatbot
 
 # Local
 from stackexplain.utilities.printers import prompt_user_for_credentials
@@ -51,4 +51,4 @@ def get_chatgpt_explanation(language, error_message):
     config = json.load(open(CONFIG_FP))
     query = construct_query(language, error_message)
     chatbot = Chatbot(config)
-    return chatbot.get_chat_response(query)["message"].strip()
+    return chatbot.ask(query)["message"].strip()
