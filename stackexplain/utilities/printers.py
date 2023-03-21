@@ -79,10 +79,9 @@ def print_invalid_language_message():
 
 def prompt_user_for_credentials():
     print(f"{BOLD}Please enter your OpenAI credentials.{END}\n")
-    email = input("Email address: ")
-    password = input("Password: ")
+    api_key = input("Api Key: ")
 
-    return email, password
+    return api_key 
 
 
 class LoadingMessage:

@@ -3,7 +3,7 @@ import json
 import os.path as path
 
 # Third party
-from revChatGPT.revChatGPT import Chatbot
+from revChatGPT.V3 import Chatbot
 
 # Local
 from stackexplain.utilities.printers import prompt_user_for_credentials
@@ -40,8 +40,8 @@ def is_user_registered():
 
 
 def register_openai_credentials():
-    email, password = prompt_user_for_credentials()
-    config = {"email": email, "password": password}
+    api_key= prompt_user_for_credentials()
+    config = {"api_key": api_key}
 
     with open(CONFIG_FP, "w") as config_file:
         json.dump(config, config_file)
@@ -50,5 +50,5 @@ def register_openai_credentials():
 def get_chatgpt_explanation(language, error_message):
     config = json.load(open(CONFIG_FP))
     query = construct_query(language, error_message)
-    chatbot = Chatbot(config)
-    return chatbot.get_chat_response(query)["message"].strip()
+    chatbot = Chatbot(**config)
+    return chatbot.ask(query).strip()
