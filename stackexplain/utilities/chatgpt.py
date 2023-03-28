@@ -26,7 +26,6 @@ def construct_query(language, error_message):
     query += "\n```"
     query += f"\n{error_message}"
     query += "\n```"
-
     return query
 
 
