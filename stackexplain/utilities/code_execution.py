@@ -3,9 +3,8 @@ import os
 from queue import Queue
 from subprocess import PIPE, Popen
 from threading import Thread
+import sys
 
-# Local
-from stackexplain.utilities.parsers import get_code_exec_command, get_error_message
 
 GRAY = "\033[37m"
 END = "\033[0m"
@@ -44,22 +43,28 @@ def write(get):
 ######
 
 
-def execute_code(args, language):
+def execute_code(args):
     """
     Executes a given command in a subshell, pipes stdout/err to the current
     shell, and returns the stderr.
     """
 
-    command = get_code_exec_command(args, language)
-    process = Popen(
-        command,
-        cwd=None,
-        shell=False,
-        close_fds=True,
-        stdout=PIPE,
-        stderr=PIPE,
-        bufsize=-1
-    )
+    process = None
+    try:
+        process = Popen(
+            args,
+            cwd=None,
+            shell=False,
+            close_fds=True,
+            stdout=PIPE,
+            stderr=PIPE,
+            bufsize=-1
+        )
+
+    except Exception as err:
+        print(err, file=sys.stderr)
+
+        exit(2)
 
     output, errors = [], []
     pipe_queue = Queue()
@@ -83,11 +88,6 @@ def execute_code(args, language):
 
     pipe_queue.put(None)
 
-    # output = ''.join(output)
     errors = ''.join(errors)
 
-    # File doesn't exist, for java, command[1] is a class name instead of a file
-    if "java" != command[0] and not os.path.isfile(command[1]):
-        return None
-
-    return get_error_message(errors, language)
+    return errors

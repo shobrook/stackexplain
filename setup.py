@@ -25,8 +25,8 @@ setup(
     include_package_data=True,
     packages=["stackexplain", "stackexplain.utilities"],
     entry_points={"console_scripts": ["stackexplain = stackexplain.stackexplain:main"]},
-    install_requires=["revChatGPT", "pygments"],
-    requires=["revChatGPT", "pygments"],
+    install_requires=["openai"],
+    requires=["openai"],
     python_requires=">=3",
     license="MIT"
 )

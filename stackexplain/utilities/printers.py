@@ -6,11 +6,6 @@ from shutil import get_terminal_size
 from threading import Thread
 from time import sleep
 
-# Third party
-from pygments import highlight
-from pygments.lexers import get_lexer_by_name
-from pygments.formatters import Terminal256Formatter
-
 CODE_IDENTIFIER = "```"
 CODE_INDENT = "    "
 
@@ -25,38 +20,6 @@ INLINE_BY_STAR_IDENTIFIER = "\*(.*?)\*"
 INLINE_BY_DASH_IDENTIFIER = "`(.*?)`"
 
 
-#########
-# HELPERS
-#########
-
-
-def handle_inline_code(text):
-    replacer = lambda s: f"{BOLD}{s.group()}{END}"
-    text = re.sub(INLINE_BY_STAR_IDENTIFIER, replacer, text)
-    text = re.sub(INLINE_BY_DASH_IDENTIFIER, replacer, text)
-
-    return text
-
-
-def slow_print(text, delay=0.01):
-    for word in text:
-        sys.stdout.write(word)
-        sys.stdout.flush() # Defeat buffering
-
-        sleep(delay)
-
-
-def slow_print_code(text, delay=0.0025):
-    code = highlight(
-        text,
-        lexer=get_lexer_by_name("python"),
-        formatter=Terminal256Formatter(style="gruvbox-dark")
-    )
-    for line in code.strip().split("\n"):
-        slow_print(f"{CODE_INDENT}{line}", delay)
-        print()
-
-
 ######
 # MAIN
 ######
@@ -68,21 +31,30 @@ def print_help_message():
     """
 
     print(f"{BOLD}StackExplain – Made by @shobrook{END}")
-    print("Command-line tool that automatically explains your error message using ChatGPT.")
-    print(f"\n\n{UNDERLINE}Usage:{END} $ stackexplain {CYAN}[file_name]{END}")
-    print(f"\n$ python3 {CYAN}test.py{END}   =>   $ stackexplain {CYAN}test.py{END}")
+    print("Command-line tool that automatically explains your error messages using ChatGPT.")
+    print(f"\n\n{UNDERLINE}Usage:{END} $ stackexplain [-h] {CYAN}<command_line_argument> [<additional_arguments>...]{END}")
+    print(f"\n$ python3 {CYAN}test.py{END}   =>   $ stackexplain {CYAN}python3 test.py{END}")
 
 
-def print_invalid_language_message():
-    print(f"\n{RED}Sorry, StackExplain doesn't support this file type.\n{END}")
+def print_api_key_missing_message():
+    print(f"\n{RED}Could not find OPENAI_API_KEY, please add this as an environment variable to use stackexplain.\n{END}", file=sys.stderr)
 
+def print_openai_api_error(err):
+    print(f"\n{RED}{err}\n{END}", file=sys.stderr)
 
-def prompt_user_for_credentials():
-    print(f"{BOLD}Please enter your OpenAI credentials.{END}\n")
-    email = input("Email address: ")
-    password = input("Password: ")
+def stream_error_explanation(streamer):
+    for chunk in streamer:
+        delta = chunk["choices"][0]["delta"]
 
-    return email, password
+        try:
+            content = delta["content"]
+
+            sys.stdout.write(content)
+            sys.stdout.flush()
+        except:
+            pass
+
+    print()
 
 
 class LoadingMessage:
@@ -130,16 +102,3 @@ class LoadingMessage:
 
     def __exit__(self, exc_type, exc_value, tb):
         self.stop()
-
-
-def print_error_explanation(explanation):
-    for i, text in enumerate(explanation.split(CODE_IDENTIFIER)):
-        if not i % 2:
-            text = handle_inline_code(text)
-            slow_print(text)
-
-            continue
-
-        slow_print_code(text)
-
-    print("\n")

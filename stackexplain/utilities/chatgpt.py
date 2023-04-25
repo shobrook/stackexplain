@@ -1,33 +1,23 @@
 # Standard library
-import json
 import os.path as path
+import os
+import sys
 
 # Third party
-from revChatGPT.revChatGPT import Chatbot
-
-# Local
-from stackexplain.utilities.printers import prompt_user_for_credentials
-
-CONFIG_FP = path.join(path.expanduser("~"), ".stackexplain.json")
-
+import openai
 
 #########
 # HELPERS
 #########
 
 
-def construct_query(language, error_message):
-    # TODO: Create an class for mapping languages to exec commands
-    language = "java" if language == "javac" else language
-    language = "python" if language == "python3" else language
-    language = "go" if language == "go run" else language
+def construct_prompt(error_message):
+    prompt = f"Explain this error message in brief and simple terms:"
+    prompt += "\n```"
+    prompt += f"\n{error_message}"
+    prompt += "\n```"
 
-    query = f"Explain this {language} error message in brief and simple terms:"
-    query += "\n```"
-    query += f"\n{error_message}"
-    query += "\n```"
-
-    return query
+    return prompt
 
 
 ######
@@ -35,20 +25,22 @@ def construct_query(language, error_message):
 ######
 
 
-def is_user_registered():
-    return path.exists(CONFIG_FP)
+def get_chatgpt_explanation(error_message):
+    query = construct_prompt(error_message)
 
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo") # if users have gpt-4 (or fine-tuned)
 
-def register_openai_credentials():
-    email, password = prompt_user_for_credentials()
-    config = {"email": email, "password": password}
+    response = openai.ChatCompletion.create(
+        model=model,
+        temperature=0.1,
+        messages=[
+            {
+            "role": "user",
+             "content": query,
+             }
+        ],
+        stream=True,
+    )
 
-    with open(CONFIG_FP, "w") as config_file:
-        json.dump(config, config_file)
-
-
-def get_chatgpt_explanation(language, error_message):
-    config = json.load(open(CONFIG_FP))
-    query = construct_query(language, error_message)
-    chatbot = Chatbot(config)
-    return chatbot.get_chat_response(query)["message"].strip()
+    return response
