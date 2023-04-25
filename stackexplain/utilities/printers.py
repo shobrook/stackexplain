@@ -20,10 +20,6 @@ INLINE_BY_STAR_IDENTIFIER = "\*(.*?)\*"
 INLINE_BY_DASH_IDENTIFIER = "`(.*?)`"
 
 
-#########
-# HELPERS
-#########
-
 ######
 # MAIN
 ######
@@ -35,18 +31,16 @@ def print_help_message():
     """
 
     print(f"{BOLD}StackExplain – Made by @shobrook{END}")
-    print("Command-line tool that automatically explains your error message using ChatGPT.")
-    print(f"\n\n{UNDERLINE}Usage:{END} $ stackexplain {CYAN}[file_name]{END}")
-    print(f"\n$ python3 {CYAN}test.py{END}   =>   $ stackexplain {CYAN}test.py{END}")
-
-
-def print_invalid_language_message():
-    print(f"\n{RED}Sorry, StackExplain doesn't support this file type.\n{END}")
+    print("Command-line tool that automatically explains your error messages using ChatGPT.")
+    print(f"\n\n{UNDERLINE}Usage:{END} $ stackexplain [-h] {CYAN}<command_line_argument> [<additional_arguments>...]{END}")
+    print(f"\n$ python3 {CYAN}test.py{END}   =>   $ stackexplain {CYAN}python3 test.py{END}")
 
 
 def print_api_key_missing_message():
-    print(f"\n{RED}Could not find OPENAI_API_KEY, please add this as an environment variable to use stackexplain.\n{END}")
+    print(f"\n{RED}Could not find OPENAI_API_KEY, please add this as an environment variable to use stackexplain.\n{END}", file=sys.stderr)
 
+def print_openai_api_error(err):
+    print(f"\n{RED}{err}\n{END}", file=sys.stderr)
 
 def stream_error_explanation(streamer):
     for chunk in streamer:

@@ -17,11 +17,9 @@ $ pip3 install stackexplain
 Running a file with `stackexplain` is just as easy as running it normally:
 
 ```bash
-$ stackexplain [file_path]
+$ stackexplain <command_line_argument> [<additional_arguments>...]
 ```
 
-This will execute the file and, if an error is thrown, send the stack trace to ChatGPT and display its explanation in your terminal.
+This will execute the command and, if an error is thrown, send the stack trace to ChatGPT and display its explanation in your terminal.
 
-Note that when you first use `stackexplain`, you'll be asked to enter your OpenAI credentials.
-
-__Supported file types:__ Python, Node.js, Ruby, Golang, and Java.
+Note: OpenAI API key is required in an environment variable called OPENAI_API_KEY
