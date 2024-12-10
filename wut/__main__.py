@@ -1,6 +1,5 @@
 # Local
-from stackexplain.stackexplain import main
-
+from wut import main
 
 if __name__ == "__main__":
     main()

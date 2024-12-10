@@ -1,15 +1,19 @@
 import sys
-from setuptools import setup
+
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup
 
 if sys.version_info[:3] < (3, 0, 0):
     print("Requires Python 3 to run.")
     sys.exit(1)
 
 setup(
-    name="stackexplain",
-    version="1.5.0",
-    description="Command-line tool that automatically explains your error message using ChatGPT",
-    url="https://github.com/shobrook/stackexplain",
+    name="wut-cli",
+    version="1.0.1",
+    description="CLI that explains the output of the previous console command",
+    url="https://github.com/shobrook/wut",
     author="shobrook",
     author_email="shobrookj@gmail.com",
     classifiers=[
@@ -19,14 +23,14 @@ setup(
         "Topic :: Software Development :: Debuggers",
         "Natural Language :: English",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python"
+        "Programming Language :: Python",
     ],
-    keywords="chatgpt cli commandline error message stack trace stackexplain explanation",
+    keywords="openai cli commandline error message stack trace explanation",
     include_package_data=True,
-    packages=["stackexplain", "stackexplain.utilities"],
-    entry_points={"console_scripts": ["stackexplain = stackexplain.stackexplain:main"]},
-    install_requires=["revChatGPT", "pygments"],
-    requires=["revChatGPT", "pygments"],
+    packages=find_packages(),
+    entry_points={"console_scripts": ["wut = wut.wut:main"]},
+    install_requires=["openai", "anthropic", "rich", "tiktoken", "psutil"],
+    requires=["openai", "anthropic", "rich", "tiktoken", "psutil"],
     python_requires=">=3",
-    license="MIT"
+    license="MIT",
 )
