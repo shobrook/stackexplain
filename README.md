@@ -2,16 +2,16 @@
 
 # wut
 
-CLI that summarizes the output of the previous console command.
-
-![Demo](./demo.gif)
+**CLI that summarizes the output of the previous console command.**
 
 Just type in `wut` and an LLM of your choice will explain what's in your terminal. You can use it to:
 
 - Understand and debug stack traces
-- Decipher mysterious error codes
+- Decipher error codes
 - Fix incorrect commands
-- Summarize ridiculously long logs
+- Summarize logs
+
+![Demo](./demo.gif)
 
 ## Installation
 
