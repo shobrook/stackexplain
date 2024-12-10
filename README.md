@@ -50,11 +50,12 @@ git: 'create-pr' is not a git command.
 
 You'll quickly get a brief explanation of the issue:
 
-```markdown
-This error occurs because `create-pr` is not a standard Git command. Git doesn't have a built-in `create-pr` command. To create a pull request, you typically need to:
+```
+This error occurs because Git doesn't have a built-in `create-pr` command.
+To create a pull request, you typically need to:
 
 1. Push your branch to the remote repository
-2. Use the web interface of GitHub
+2. Use the GitHub web interface
 ```
 
 If you have a _specific question_ about your last command, you can include a query:
