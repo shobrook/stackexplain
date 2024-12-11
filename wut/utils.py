@@ -292,7 +292,7 @@ def get_terminal_context(shell: Shell, max_tokens=4096, max_commands=3) -> str:
         commands = list(reversed(commands))  # Order: Oldest to newest
 
         previous_commands = commands[:-1]
-        latest_command = commands[-1]
+        last_command = commands[-1]
 
         context = "<terminal_history>\n"
         context += "<previous_commands>\n"
@@ -300,9 +300,9 @@ def get_terminal_context(shell: Shell, max_tokens=4096, max_commands=3) -> str:
             command_to_string(c, shell.prompt) for c in previous_commands
         )
         context += "\n</previous_commands>\n"
-        context += "\n<latest_command>\n"
-        context += command_to_string(latest_command, shell.prompt)
-        context += "\n</latest_command>"
+        context += "\n<last_command>\n"
+        context += command_to_string(last_command, shell.prompt)
+        context += "\n</last_command>"
         context += "\n</terminal_history>"
 
     return context
@@ -321,7 +321,7 @@ def get_system_context(shell: Shell) -> str:
 
 def build_query(context: str, query: Optional[str] = None) -> str:
     if not (query and query.strip()):
-        query = "Explain the last command's output. Use the previous commands as context, if relevant. Follow the instructions and formatting rules when you generate a response."
+        query = "Explain the last command's output. Use the previous commands as context, if relevant, but focus on the last command."
 
     return f"{context}\n\n{query}"
 

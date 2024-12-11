@@ -11,8 +11,8 @@ if sys.version_info[:3] < (3, 0, 0):
 
 setup(
     name="wut-cli",
-    version="1.0.2",
-    description="CLI that explains the output of the previous console command",
+    version="1.0.3",
+    description="CLI that explains the output of your last command",
     url="https://github.com/shobrook/wut",
     author="shobrook",
     author_email="shobrookj@gmail.com",
@@ -25,7 +25,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
     ],
-    keywords="openai cli commandline error message stack trace explanation",
+    keywords="openai claude cli commandline error stack-trace explain assistant terminal",
     include_package_data=True,
     packages=find_packages(),
     entry_points={"console_scripts": ["wut = wut.wut:main"]},
