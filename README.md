@@ -1,5 +1,3 @@
-<!--A terminal assistant for the hopelessly confused-->
-
 # wut
 
 **CLI that explains the output of the previous console command.**
@@ -68,7 +66,7 @@ If you have a _specific question_ about your last command, you can include a que
 
 ## Roadmap
 
-1. [If possible,](https://stackoverflow.com/questions/24283097/reusing-output-from-last-command-in-bash/75629157#75629157) capture terminal output _outside_ a tmux or screen session.
+1. [If possible,](https://stackoverflow.com/questions/24283097/reusing-output-from-last-command-in-bash/75629157#75629157) drop the requirement of being inside a tmux or screen session.
 2. Add a `--fix` option to automatically execute a command suggested by `wut`.
 3. Add `wut` to Homebrew.
 4. Make some unit tests.
