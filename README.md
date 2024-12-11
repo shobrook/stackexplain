@@ -2,12 +2,12 @@
 
 **CLI that explains the output of your last command.**
 
-Just type `wut` and an LLM will help you understand whatever's in your terminal. You'll be surprised how useful this can be. It's perfect for:
+Just type `wut` and an LLM will help you understand whatever's in your terminal. You'll be surprised how useful this can be:
 
-- Understanding stack traces
-- Deciphering error codes
-- Fixing incorrect commands
-- Summarizing logs
+- Understand stack traces
+- Decipher error codes
+- Fix incorrect commands
+- Summarize logs
 
 ![Demo](./demo.gif)
 
