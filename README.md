@@ -2,7 +2,7 @@
 
 **CLI that explains the output of your last command.**
 
-Just type `wut` and an LLM will help you understand whatever's in your terminal. You'll be surprised how useful this can be:
+Just type `wut` and an LLM will help you understand whatever's in your terminal. You'll be surprised how useful this can be. It can help you:
 
 - Understand stack traces
 - Decipher error codes
