@@ -2,7 +2,7 @@
 
 # wut
 
-**CLI that summarizes the output of the previous console command.**
+**CLI that explains the output of the previous console command.**
 
 Just type in `wut` and an LLM of your choice will explain what's in your terminal. You can use it to:
 
