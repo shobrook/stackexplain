@@ -1,13 +1,13 @@
 # wut
 
-**CLI that explains the output of the previous console command.**
+**CLI that explains the output of your last command.**
 
-Just type in `wut` and an LLM of your choice will explain what's in your terminal. You can use it to:
+Just type `wut` and an LLM will help you understand whatever's in your terminal. You'll be surprised how useful this can be. It's perfect for:
 
-- Understand and debug stack traces
-- Decipher error codes
-- Fix incorrect commands
-- Summarize logs
+- Understanding stack traces
+- Deciphering error codes
+- Fixing incorrect commands
+- Summarizing logs
 
 ![Demo](./demo.gif)
 
@@ -29,7 +29,7 @@ On other systems, you can install using pip:
 > pipx install wut-cli
 ``` -->
 
-Once installed, you can choose either OpenAI or Claude as your LLM provider. Just ensure you have the appropriate key added to your environment:
+Once installed, you can use either OpenAI or Claude as your LLM provider. Just add the appropriate API key to your environment:
 
 ```bash
 > export OPENAI_API_KEY="..."
