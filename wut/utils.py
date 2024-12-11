@@ -119,10 +119,11 @@ def get_aliases(shell: Shell) -> str:
 
 
 def get_pane_output() -> str:
+    output_file = None
     output = ""
     try:
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            temp_file_name = temp_file.name
+            output_file = temp_file.name
 
             if os.getenv("TMUX"):  # tmux session
                 cmd = [
@@ -133,20 +134,22 @@ def get_pane_output() -> str:
                     # f"-{MAX_HISTORY_LINES}",
                     "-",
                 ]
-                with open(temp_file_name, "w") as f:
+                with open(output_file, "w") as f:
                     run(cmd, stdout=f, text=True)
             elif os.getenv("STY"):  # screen session
-                cmd = ["screen", "-X", "hardcopy", "-h", temp_file_name]
+                cmd = ["screen", "-X", "hardcopy", "-h", output_file]
                 check_output(cmd, text=True)
             else:
                 return ""
 
-            with open(temp_file_name, "r") as f:
+            with open(output_file, "r") as f:
                 output = f.read()
     except CalledProcessError as e:
         pass
 
-    os.remove(temp_file_name)
+    if output_file:
+        os.remove(output_file)
+
     return output
 
 
@@ -274,9 +277,11 @@ def get_shell() -> Shell:
     return Shell(path, name, prompt)  # NOTE: Could all be null values
 
 
-# TODO: Handle pane_output == None
 def get_terminal_context(shell: Shell, max_tokens=4096, max_commands=3) -> str:
     pane_output = get_pane_output()
+    if not pane_output:
+        return "<terminal_history>No terminal output found.</terminal_history>"
+
     if not shell.prompt:
         # W/o the prompt, we can't reliably separate commands in terminal output
         pane_output = truncate_pane_output(pane_output, max_tokens)
@@ -315,10 +320,10 @@ def get_system_context(shell: Shell) -> str:
 
 
 def build_query(context: str, query: Optional[str] = None) -> str:
-    if query and query.strip():
-        return f"{context}\n\n{query}"
+    if not (query and query.strip()):
+        query = "Explain the last command's output. Use the previous commands as context, if relevant. Follow the instructions and formatting rules when you generate a response."
 
-    return f"{context}\n\nSummarize the output above. Follow the rules and style guide."
+    return f"{context}\n\n{query}"
 
 
 def explain(context: str, query: Optional[str] = None) -> str:

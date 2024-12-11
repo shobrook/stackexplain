@@ -56,7 +56,7 @@ def main():
         return
 
     # Gather context and generate a response
-    with console.status("[bold green]Generating a response..."):
+    with console.status("[bold green]Figuring it out..."):
         shell = get_shell()
         # system_context = get_system_context(shell)
         terminal_context = get_terminal_context(shell)
