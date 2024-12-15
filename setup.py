@@ -29,8 +29,8 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     entry_points={"console_scripts": ["wut = wut.wut:main"]},
-    install_requires=["openai", "anthropic", "rich", "psutil"],
-    requires=["openai", "anthropic", "rich", "psutil"],
+    install_requires=["openai", "anthropic", "ollama", "rich", "psutil"],
+    requires=["openai", "anthropic", "ollama", "rich", "psutil"],
     python_requires=">=3",
     license="MIT",
 )

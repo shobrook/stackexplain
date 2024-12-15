@@ -34,6 +34,7 @@ Once installed, you can use either OpenAI or Claude as your LLM provider. Just a
 ```bash
 > export OPENAI_API_KEY="..."
 > export ANTHROPIC_API_KEY="..."
+> export OLLAMA_MODEL="..."
 ```
 
 ## Usage
