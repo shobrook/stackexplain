@@ -1,13 +1,11 @@
 # Standard library
 import os
-import re
 import tempfile
 from collections import namedtuple
 from subprocess import check_output, run, CalledProcessError
 from typing import List, Optional, Tuple
 
 # Third party
-import tiktoken
 from psutil import Process
 from openai import OpenAI
 from anthropic import Anthropic
@@ -18,10 +16,9 @@ from wut.prompts import EXPLAIN_PROMPT, ANSWER_PROMPT
 
 # from prompts import EXPLAIN_PROMPT, ANSWER_PROMPT
 
-MAX_HISTORY_LINES = 10000
+MAX_CHARS = 10000
+MAX_COMMANDS = 3
 SHELLS = ["bash", "fish", "zsh", "csh", "tcsh", "powershell", "pwsh"]
-
-tokenizer = tiktoken.get_encoding("cl100k_base")
 
 Shell = namedtuple("Shell", ["path", "name", "prompt"])
 Command = namedtuple("Command", ["text", "output"])
@@ -32,14 +29,12 @@ Command = namedtuple("Command", ["text", "output"])
 #########
 
 
-def count_tokens(text: str) -> int:
-    return len(tokenizer.encode(text, disallowed_special=()))
+def count_chars(text: str) -> int:
+    return len(text)
 
 
-def truncate_tokens(text: str, max_tokens: int, reverse: bool = False) -> str:
-    tokens = tokenizer.encode(text, disallowed_special=())
-    tokens = tokens[-max_tokens:] if reverse else tokens[:max_tokens]
-    return tokenizer.decode(tokens)
+def truncate_chars(text: str, reverse: bool = False) -> str:
+    return text[-MAX_CHARS:] if reverse else text[:MAX_CHARS]
 
 
 def get_shell_name(shell_path: Optional[str] = None) -> Optional[str]:
@@ -87,6 +82,7 @@ def get_shell_prompt(shell_name: str, shell_path: str) -> Optional[str]:
         if shell_name == "zsh":
             cmd = [
                 shell_path,
+                # "-i",
                 "-c",
                 "print -P $PS1",
             ]
@@ -112,10 +108,6 @@ def get_shell_prompt(shell_name: str, shell_path: str) -> Optional[str]:
         pass
 
     return shell_prompt.strip() if shell_prompt else None
-
-
-def get_aliases(shell: Shell) -> str:
-    return check_output([shell.path, "-ic", "alias"], text=True).strip()
 
 
 def get_pane_output() -> str:
@@ -175,21 +167,23 @@ def get_commands(pane_output: str, shell: Shell) -> List[Command]:
     return commands[1:]  # Exclude the wut command itself
 
 
-def truncate_commands(commands: List[Command], max_tokens: int) -> List[Command]:
-    num_tokens = 0
+def truncate_commands(commands: List[Command]) -> List[Command]:
+    num_chars = 0
     truncated_commands = []
     for command in commands:
-        command_tokens = count_tokens(command.text)
-        if command_tokens + num_tokens > max_tokens:
+        command_chars = count_chars(command.text)
+        if command_chars + num_chars > MAX_CHARS:
             break
+        num_chars += command_chars
 
         output = []
         for line in reversed(command.output.splitlines()):
-            line_tokens = count_tokens(line)
-            if line_tokens + num_tokens > max_tokens:
+            line_chars = count_chars(line)
+            if line_chars + num_chars > MAX_CHARS:
                 break
 
             output.append(line)
+            num_chars += line_chars
 
         output = "\n".join(reversed(output))
         command = Command(command.text, output)
@@ -198,7 +192,7 @@ def truncate_commands(commands: List[Command], max_tokens: int) -> List[Command]
     return truncated_commands
 
 
-def truncate_pane_output(output: str, max_tokens: int) -> str:
+def truncate_pane_output(output: str) -> str:
     hit_non_empty_line = False
     lines = []  # Order: newest to oldest
     for line in reversed(output.splitlines()):
@@ -210,7 +204,7 @@ def truncate_pane_output(output: str, max_tokens: int) -> str:
 
     lines = lines[1:]  # Remove wut command
     output = "\n".join(reversed(lines))
-    output = truncate_tokens(output, max_tokens, reverse=True)
+    output = truncate_chars(output, reverse=True)
     output = output.strip()
 
     return output
@@ -277,18 +271,18 @@ def get_shell() -> Shell:
     return Shell(path, name, prompt)  # NOTE: Could all be null values
 
 
-def get_terminal_context(shell: Shell, max_tokens=4096, max_commands=3) -> str:
+def get_terminal_context(shell: Shell) -> str:
     pane_output = get_pane_output()
     if not pane_output:
         return "<terminal_history>No terminal output found.</terminal_history>"
 
     if not shell.prompt:
         # W/o the prompt, we can't reliably separate commands in terminal output
-        pane_output = truncate_pane_output(pane_output, max_tokens)
+        pane_output = truncate_pane_output(pane_output)
         context = f"<terminal_history>\n{pane_output}\n</terminal_history>"
     else:
         commands = get_commands(pane_output, shell)
-        commands = truncate_commands(commands[:max_commands], max_tokens)
+        commands = truncate_commands(commands[:MAX_COMMANDS])
         commands = list(reversed(commands))  # Order: Oldest to newest
 
         previous_commands = commands[:-1]
@@ -306,17 +300,6 @@ def get_terminal_context(shell: Shell, max_tokens=4096, max_commands=3) -> str:
         context += "\n</terminal_history>"
 
     return context
-
-
-def get_system_context(shell: Shell) -> str:
-    system = check_output(["uname", "-a"], text=True).strip()
-    aliases = get_aliases(shell)
-
-    system = f"<system>{system}</system>"
-    shell = f"<shell>{shell.name or shell.path}</shell>"
-    aliases = f"<aliases>\n{aliases}\n</aliases>"
-
-    return f"<system_info>\n{system}\n{shell}\n{aliases}\n</system_info>"
 
 
 def build_query(context: str, query: Optional[str] = None) -> str:

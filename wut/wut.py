@@ -9,7 +9,6 @@ from rich.console import Console
 from wut.utils import (
     get_shell,
     get_terminal_context,
-    get_system_context,
     explain,
 )
 
@@ -58,7 +57,6 @@ def main():
     # Gather context and generate a response
     with console.status("[bold green]Making sense of it all..."):
         shell = get_shell()
-        # system_context = get_system_context(shell)
         terminal_context = get_terminal_context(shell)
 
         debug(f"Retrieved shell information:\n{shell}")
