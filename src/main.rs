@@ -43,12 +43,14 @@ fn main() {
 
     // Ensure environment is set up correctly
     if env::var("TMUX").is_err() && env::var("STY").is_err() {
-        // TODO: Make this red
-        println!("wut must be run inside a tmux or screen session.")
+        loader.finish_and_clear();
+        println!("\x1b[31mwut must be run inside a tmux or screen session.\x1b[0m");
+        return;
     }
     if env::var("OPENAI_API_KEY").is_err() && env::var("ANTHROPIC_API_KEY").is_err() {
-        // TODO: Make this red
-        println!("Please create an environment variable for your OpenAI or Anthropic API key.");
+        loader.finish_and_clear();
+        println!("\x1b[31mPlease create an environment variable for your OpenAI or Anthropic API key.\x1b[0m");
+        return;
     }
 
     let shell = get_shell();

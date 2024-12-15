@@ -57,11 +57,11 @@ fn get_terminal_history() -> Option<String> {
                 .status()
         } else if std::env::var("STY").is_ok() {
             // screen session
-            Command::new("screen")
+            Command::new("/usr/bin/screen")
                 .arg("-X")
                 .arg("hardcopy")
                 .arg("-h")
-                .arg(temp_file.path())
+                .arg(temp_file.path().to_str().unwrap())
                 .status()
         } else {
             return None;
@@ -188,11 +188,15 @@ MAIN
 
 pub fn get_terminal_context(shell: &Shell) -> String {
     let history = get_terminal_history();
+    // if history.is_none() || history.as_deref() == Some("") {
     if history.is_none() {
         return "<terminal_history>No terminal output found.</terminal_history>".to_string();
     }
 
     let history = history.unwrap();
+
+    println!("{}", history);
+    println!("!!! DONE WITH HISTORY !!!");
 
     if shell.prompt.is_none() {
         // W/o the prompt, we can't reliably separate commands in terminal output
@@ -203,6 +207,10 @@ pub fn get_terminal_context(shell: &Shell) -> String {
         let commands = commands.into_iter().take(MAX_COMMANDS).collect::<Vec<_>>();
         let commands = truncate_commands(commands);
         let commands: Vec<TerminalCommand> = commands.into_iter().rev().collect(); // Order: Oldest to newest
+
+        if commands.is_empty() {
+            return "<terminal_history>No terminal output found.</terminal_history>".to_string();
+        }
 
         let previous_commands = &commands[..commands.len().saturating_sub(1)];
         let last_command: &TerminalCommand = commands.last().unwrap();
