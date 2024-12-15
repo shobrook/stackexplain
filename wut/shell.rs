@@ -1,5 +1,4 @@
 use std::process::Command;
-use sysinfo::System;
 
 #[derive(Debug)]
 pub enum ShellType {
@@ -77,30 +76,16 @@ fn get_shell_path() -> Option<String> {
         }
     }
 
-    let mut sys = System::new_all();
-    sys.refresh_all();
-
-    if let Ok(current_pid) = sysinfo::get_current_pid() {
-        let mut current_pid = current_pid;
-        while current_pid.as_u32() > 0 {
-            if let Some(process) = sys.process(current_pid) {
-                let process_name = process.name();
-                let process_exe = process.exe()?.to_string_lossy().to_string();
-
-                if get_shell_name(process_name.to_str()).is_some() {
-                    return Some(process_exe);
-                }
-
-                if let Some(parent_pid) = process.parent() {
-                    current_pid = parent_pid;
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-    }
+    // TODO: Find an equivalent of psutil in Rust
+    // let mut proc = psutil::process::Process::new(std::process::id() as i32).ok();
+    // while let Some(ref p) = proc {
+    //     if let Ok(name) = p.name() {
+    //         if get_shell_name(Some(&name)).is_some() {
+    //             return Some(name);
+    //         }
+    //     }
+    //     proc = p.parent().ok().flatten();
+    // }
 
     path
 }
