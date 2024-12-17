@@ -29,11 +29,16 @@ On other systems, you can install using pip:
 > pipx install wut-cli
 ``` -->
 
-Once installed, you can use OpenAI, Claude, or Ollama as your LLM provider. Just add the appropriate API key or for Ollama the model name that is being served to your environment:
+Once installed, you can use OpenAI or Claude as your LLM provider. Just add the appropriate API key to your environment:
 
 ```bash
 > export OPENAI_API_KEY="..."
 > export ANTHROPIC_API_KEY="..."
+```
+
+You can also use a local model with Ollama. Just add the model name that's being served to your environment:
+
+```bash
 > export OLLAMA_MODEL="..."
 ```
 

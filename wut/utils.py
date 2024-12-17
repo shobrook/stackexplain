@@ -6,6 +6,7 @@ from subprocess import check_output, run, CalledProcessError
 from typing import List, Optional, Tuple
 
 # Third party
+from ollama import chat
 from psutil import Process
 from openai import OpenAI
 from anthropic import Anthropic
@@ -249,9 +250,8 @@ def run_openai(system_message: str, user_message: str) -> str:
     )
     return response.choices[0].message.content
 
+
 def run_ollama(system_message: str, user_message: str) -> str:
-    from ollama import chat
-    
     response = chat(
         model=os.getenv("OLLAMA_MODEL", None),
         messages=[
@@ -271,7 +271,7 @@ def get_llm_provider() -> str:
 
     if os.getenv("OLLAMA_MODEL", None):
         return "ollama"
-    
+
     raise ValueError("No API key found for OpenAI or Anthropic.")
 
 
@@ -329,11 +329,11 @@ def explain(context: str, query: Optional[str] = None) -> str:
     user_message = build_query(context, query)
     provider = get_llm_provider()
 
-    call_llm = run_ollama
-    if provider == "openai":
-        call_llm = run_openai
-    elif provider == "anthropic":
+    call_llm = run_openai
+    if provider == "anthropic":
         call_llm = run_anthropic
-    
+    elif provider == "ollama":
+        call_llm = run_ollama
+
     output = call_llm(system_message, user_message)
     return format_output(output)
