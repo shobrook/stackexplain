@@ -44,7 +44,7 @@ You can also use a local model with Ollama. Just add the model name that's being
 
 ## Usage
 
-`wut` must be used inside a tmux or screen session. To use it, just type `wut` after running a command:
+`wut` must be used inside a tmux or screen session to capture the last command's output. To use it, just type `wut` after running a command:
 
 ```bash
 > git create-pr
