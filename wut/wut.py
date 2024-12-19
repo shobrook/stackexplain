@@ -50,6 +50,7 @@ def main():
         not os.environ.get("OPENAI_API_KEY", None)
         and not os.environ.get("ANTHROPIC_API_KEY", None)
         and not os.environ.get("OLLAMA_MODEL", None)
+        and not os.environ.get("GOOGLE_API_KEY", None)
     ):
         console.print(
             "[bold red]Please set your OpenAI or Anthropic API key in your environment variables. Or, alternatively, specify an Ollama model name.[/bold red]"

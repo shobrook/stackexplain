@@ -10,6 +10,8 @@ from ollama import chat
 from psutil import Process
 from openai import OpenAI
 from anthropic import Anthropic
+from google import genai
+from google.genai import types
 from rich.markdown import Markdown
 
 # Local
@@ -250,6 +252,18 @@ def run_openai(system_message: str, user_message: str) -> str:
     )
     return response.choices[0].message.content
 
+def run_google(system_message: str, user_message: str) -> str:
+    client = genai.Client()
+    response = client.models.generate_content(
+        model='gemini-2.0-flash-exp',
+        contents=user_message,
+        config=types.GenerateContentConfig(
+            system_instruction=system_message,
+            temperature= 0.7,
+            max_output_tokens=4096
+        ),
+    )
+    return response.text
 
 def run_ollama(system_message: str, user_message: str) -> str:
     response = chat(
@@ -271,6 +285,9 @@ def get_llm_provider() -> str:
 
     if os.getenv("OLLAMA_MODEL", None):
         return "ollama"
+    
+    if os.getenv("GOOGLE_API_KEY", None):
+        return "google"
 
     raise ValueError("No API key found for OpenAI or Anthropic.")
 
@@ -332,6 +349,8 @@ def explain(context: str, query: Optional[str] = None) -> str:
     call_llm = run_openai
     if provider == "anthropic":
         call_llm = run_anthropic
+    elif provider == "google":
+        call_llm = run_google
     elif provider == "ollama":
         call_llm = run_ollama
 

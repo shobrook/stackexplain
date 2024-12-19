@@ -9,6 +9,7 @@ tiktoken = "*"
 openai = "*"
 rich = "*"
 anthropic = "*"
+google-genai = "*"
 
 [dev-packages]
 
