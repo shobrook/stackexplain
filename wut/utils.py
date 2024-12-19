@@ -239,13 +239,13 @@ def run_anthropic(system_message: str, user_message: str) -> str:
 
 
 def run_openai(system_message: str, user_message: str) -> str:
-    openai = OpenAI()
+    openai = OpenAI(base_url=os.getenv("OPENAI_BASE_URL", None))
     response = openai.chat.completions.create(
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_message},
         ],
-        model="gpt-4o",
+        model=os.getenv("OPENAI_MODEL", None) or "gpt-4o",
         temperature=0.7,
     )
     return response.choices[0].message.content
