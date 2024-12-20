@@ -2,7 +2,7 @@
 import os
 import tempfile
 from collections import namedtuple
-from subprocess import check_output, run, CalledProcessError
+from subprocess import check_output, run, CalledProcessError, DEVNULL
 from typing import List, Optional, Tuple
 
 # Third party
@@ -87,26 +87,28 @@ def get_shell_prompt(shell_name: str, shell_path: str) -> Optional[str]:
                 "-c",
                 "print -P $PS1",
             ]
-            shell_prompt = check_output(cmd, text=True)
+            shell_prompt = check_output(cmd, text=True, stderr=DEVNULL)
         elif shell_name == "bash":
             # Uses parameter transformation; only supported in Bash 4.4+
             cmd = [
-                shell_path,
+                # shell_path,
                 "echo",
                 '"${PS1@P}"',
             ]
-            shell_prompt = check_output(cmd, text=True)
+            shell_prompt = check_output(cmd, text=True, stderr=DEVNULL)
+            if shell_prompt.strip() == '"${PS1@P}"':
+                return None
         elif shell_name == "fish":
             cmd = [shell_path, "fish_prompt"]
-            shell_prompt = check_output(cmd, text=True)
+            shell_prompt = check_output(cmd, text=True, stderr=DEVNULL)
         elif shell_name in ["csh", "tcsh"]:
             cmd = [shell_path, "-c", "echo $prompt"]
-            shell_prompt = check_output(cmd, text=True)
+            shell_prompt = check_output(cmd, text=True, stderr=DEVNULL)
         elif shell_name in ["pwsh", "powershell"]:
             cmd = [shell_path, "-c", "Write-Host $prompt"]
-            shell_prompt = check_output(cmd, text=True)
+            shell_prompt = check_output(cmd, text=True, stderr=DEVNULL)
     except:
-        pass
+        shell_prompt = None
 
     return shell_prompt.strip() if shell_prompt else None
 
