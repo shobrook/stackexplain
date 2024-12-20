@@ -10,7 +10,6 @@ openai = "*"
 anthropic = "*"
 google-genai = "*"
 setuptools = "*"
-wut-cli = {file = ".", editable = true}
 rich = "*"
 
 [dev-packages]
