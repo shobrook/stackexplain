@@ -15,7 +15,6 @@ from wut.utils import (
 # from utils import (
 #     get_shell,
 #     get_terminal_context,
-#     get_system_context,
 #     explain,
 # )
 
@@ -40,24 +39,24 @@ def main():
     console = Console()
     debug = lambda text: console.print(f"wut | {text}") if args.debug else None
 
-    # Ensure environment is set up correctly
-    if not os.environ.get("TMUX") and not os.environ.get("STY"):
-        console.print(
-            "[bold red]wut must be run inside a tmux or screen session.[/bold red]"
-        )
-        return
-    if (
-        not os.environ.get("OPENAI_API_KEY", None)
-        and not os.environ.get("ANTHROPIC_API_KEY", None)
-        and not os.environ.get("OLLAMA_MODEL", None)
-    ):
-        console.print(
-            "[bold red]Please set your OpenAI or Anthropic API key in your environment variables. Or, alternatively, specify an Ollama model name.[/bold red]"
-        )
-        return
+    with console.status("[bold green]Trying my best..."):
+        # Ensure environment is set up correctly
+        if not os.environ.get("TMUX") and not os.environ.get("STY"):
+            console.print(
+                "[bold red]wut must be run inside a tmux or screen session.[/bold red]"
+            )
+            return
+        if (
+            not os.environ.get("OPENAI_API_KEY", None)
+            and not os.environ.get("ANTHROPIC_API_KEY", None)
+            and not os.environ.get("OLLAMA_MODEL", None)
+        ):
+            console.print(
+                "[bold red]Please set your OpenAI or Anthropic API key in your environment variables. Or, alternatively, specify an Ollama model name.[/bold red]"
+            )
+            return
 
-    # Gather context and generate a response
-    with console.status("[bold green]Making sense of it all..."):
+        # Gather context
         shell = get_shell()
         terminal_context = get_terminal_context(shell)
 
@@ -65,6 +64,7 @@ def main():
         debug(f"Retrieved terminal context:\n{terminal_context}")
         debug("Sending request to LLM...")
 
+        # Get response
         response = explain(terminal_context, args.query)
 
     console.print(response)

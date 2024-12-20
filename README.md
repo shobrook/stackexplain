@@ -36,17 +36,17 @@ Once installed, you can use OpenAI or Claude as your LLM provider. Just add the 
 > export ANTHROPIC_API_KEY="..."
 ```
 
-You can customize your OpenAI model and base url by adding the following to your environment:
-
-```bash
-> export OPENAI_MODEL="..." # default to "gpt-4o"
-> export OPENAI_BASE_URL="..." # default to None
-```
-
 You can also use a local model with Ollama. Just add the model name that's being served to your environment:
 
 ```bash
 > export OLLAMA_MODEL="..."
+```
+
+If you're using OpenAI, you can customize your model and API URL by adding the following to your environment:
+
+```bash
+> export OPENAI_MODEL="..." # Default to "gpt-4o"
+> export OPENAI_BASE_URL="..." # Default to None
 ```
 
 ## Usage
