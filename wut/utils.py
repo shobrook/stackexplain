@@ -13,8 +13,8 @@ from anthropic import Anthropic
 from google import genai
 from google.genai import types
 from rich.markdown import Markdown
+import subprocess
 
-# Local
 from wut.prompts import EXPLAIN_PROMPT, ANSWER_PROMPT
 
 # from prompts import EXPLAIN_PROMPT, ANSWER_PROMPT
@@ -85,11 +85,11 @@ def get_shell_prompt(shell_name: str, shell_path: str) -> Optional[str]:
         if shell_name == "zsh":
             cmd = [
                 shell_path,
-                # "-i",
+                "-i",  # Add interactive mode
                 "-c",
                 "print -P $PS1",
             ]
-            shell_prompt = check_output(cmd, text=True)
+            shell_prompt = check_output(cmd, stderr=subprocess.PIPE, text=True)
         elif shell_name == "bash":
             # Uses parameter transformation; only supported in Bash 4.4+
             cmd = [
@@ -107,7 +107,8 @@ def get_shell_prompt(shell_name: str, shell_path: str) -> Optional[str]:
         elif shell_name in ["pwsh", "powershell"]:
             cmd = [shell_path, "-c", "Write-Host $prompt"]
             shell_prompt = check_output(cmd, text=True)
-    except:
+    except Exception as e:
+        print(f"DEBUG: Shell prompt error: {str(e)}")  # Debug line
         pass
 
     return shell_prompt.strip() if shell_prompt else None
@@ -149,25 +150,51 @@ def get_pane_output() -> str:
 
 
 def get_commands(pane_output: str, shell: Shell) -> List[Command]:
-    # TODO: Handle edge cases. E.g. if you change the shell prompt in the middle of a session,
-    # only the latest prompt will be used to split the pane output into `Command` objects.
-
-    commands = []  # Order: newest to oldest
+    commands = []
     buffer = []
+    
+    # Common prompt endings for various shells including p10k
+    PROMPT_MARKERS = ['%', '$', '#', '❯', '>', '➜']
+    
     for line in reversed(pane_output.splitlines()):
         if not line.strip():
             continue
-
-        if shell.prompt.lower() in line.lower():
-            command_text = line.split(shell.prompt, 1)[1].strip()
-            command = Command(command_text, "\n".join(reversed(buffer)).strip())
-            commands.append(command)
-            buffer = []
+        
+        # Skip lines containing 'wut' command
+        if 'wut' in line:
             continue
-
+            
+        # Try exact prompt match first
+        if shell.prompt and shell.prompt.lower() in line.lower():
+            command_text = line.split(shell.prompt, 1)[1].strip()
+            if command_text:  # Only if we found a non-empty command
+                command = Command(command_text, "\n".join(reversed(buffer)).strip())
+                commands.append(command)
+                buffer = []
+            continue
+            
+        # Fall back to checking for common prompt endings
+        found_command = False
+        for marker in PROMPT_MARKERS:
+            # Only split on markers at the start of the line (allowing for whitespace)
+            if line.lstrip().startswith(marker):
+                try:
+                    command_text = line.lstrip().split(marker, 1)[1].strip()
+                    if command_text:  # Only if we found a non-empty command
+                        command = Command(command_text, "\n".join(reversed(buffer)).strip())
+                        commands.append(command)
+                        buffer = []
+                        found_command = True
+                        break
+                except IndexError:
+                    continue
+                    
+        if found_command:  # If we found a command, move to next line
+            continue
+            
         buffer.append(line)
-
-    return commands[1:]  # Exclude the wut command itself
+    
+    return commands  # No need to exclude first command since we're filtering 'wut'
 
 
 def truncate_commands(commands: List[Command]) -> List[Command]:
@@ -255,11 +282,11 @@ def run_openai(system_message: str, user_message: str) -> str:
 def run_google(system_message: str, user_message: str) -> str:
     client = genai.Client()
     response = client.models.generate_content(
-        model='gemini-2.0-flash-exp',
+        model=os.getenv("GEMINI_MODEL", None) or 'gemini-2.0-flash-exp',
         contents=user_message,
         config=types.GenerateContentConfig(
             system_instruction=system_message,
-            temperature= 0.7,
+            temperature=0.7,
             max_output_tokens=4096
         ),
     )
@@ -289,7 +316,7 @@ def get_llm_provider() -> str:
     if os.getenv("GOOGLE_API_KEY", None):
         return "google"
 
-    raise ValueError("No API key found for OpenAI or Anthropic.")
+    raise ValueError("No API key found for OpenAI, Anthropic, or Google.")
 
 
 ######
@@ -316,6 +343,10 @@ def get_terminal_context(shell: Shell) -> str:
         commands = get_commands(pane_output, shell)
         commands = truncate_commands(commands[:MAX_COMMANDS])
         commands = list(reversed(commands))  # Order: Oldest to newest
+        
+        # Add check for empty commands list
+        if not commands:
+            return "<terminal_history>No commands found in terminal output.</terminal_history>"
 
         previous_commands = commands[:-1]
         last_command = commands[-1]

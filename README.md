@@ -37,6 +37,12 @@ Once installed, you can use OpenAI, Claude, or Google's Gemini as your LLM provi
 > export GOOGLE_API_KEY="..."
 ```
 
+You can also specify the model you want to use with Google's Gemini:
+
+```bash
+> export GEMINI_MODEL="..."
+```
+
 You can also use a local model with Ollama. Just add the model name that's being served to your environment:
 
 ```bash

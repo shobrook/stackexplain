@@ -7,9 +7,11 @@ name = "pypi"
 psutil = "*"
 tiktoken = "*"
 openai = "*"
-rich = "*"
 anthropic = "*"
 google-genai = "*"
+setuptools = "*"
+wut-cli = {file = ".", editable = true}
+rich = "*"
 
 [dev-packages]
 

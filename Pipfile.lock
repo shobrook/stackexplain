@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1adc4453646741674e29ba19ce96c2a0238f1a8c766ea5645d74be93595be882"
+            "sha256": "0d5061c761e88a83be7ca9b817f2274306dc1deae2c0198cf3b707e205786bbf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -211,11 +211,11 @@
         },
         "httpx": {
             "hashes": [
-                "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc",
-                "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"
+                "sha256:7bb2708e112d8fdd7829cd4243970f0c223274051cb35ee80c03301ee29a3df0",
+                "sha256:f7c2be1d2f3c3c3160d441802406b206c2b76f5947b11115e6df10c6c65e66c2"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==0.28.1"
+            "version": "==0.27.2"
         },
         "idna": {
             "hashes": [
@@ -322,6 +322,14 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==0.1.2"
+        },
+        "ollama": {
+            "hashes": [
+                "sha256:0f466e845e2205a1cbf5a2fef4640027b90beaa3b06c574426d8b6b17fd6e139",
+                "sha256:e1db064273c739babc2dde9ea84029c4a43415354741b6c50939ddd3dd0f7ffb"
+            ],
+            "markers": "python_version >= '3.8' and python_version < '4.0'",
+            "version": "==0.4.4"
         },
         "openai": {
             "hashes": [
@@ -700,6 +708,15 @@
             "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==4.9"
         },
+        "setuptools": {
+            "hashes": [
+                "sha256:8199222558df7c86216af4f84c30e9b34a61d8ba19366cc914424cdbd28252f6",
+                "sha256:ce74b49e8f7110f9bf04883b730f4765b774ef3ef28f722cce7c273d253aaf7d"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==75.6.0"
+        },
         "sniffio": {
             "hashes": [
                 "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2",
@@ -844,6 +861,11 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==14.1"
+        },
+        "wut-cli": {
+            "editable": true,
+            "file": ".",
+            "markers": "python_version >= '3'"
         }
     },
     "develop": {}

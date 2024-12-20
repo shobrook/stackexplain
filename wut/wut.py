@@ -46,14 +46,21 @@ def main():
             "[bold red]wut must be run inside a tmux or screen session.[/bold red]"
         )
         return
-    if (
-        not os.environ.get("OPENAI_API_KEY", None)
-        and not os.environ.get("ANTHROPIC_API_KEY", None)
-        and not os.environ.get("OLLAMA_MODEL", None)
-        and not os.environ.get("GOOGLE_API_KEY", None)
-    ):
+    # Check API keys and models
+    has_openai = os.environ.get("OPENAI_API_KEY")
+    has_anthropic = os.environ.get("ANTHROPIC_API_KEY")
+    has_ollama = os.environ.get("OLLAMA_MODEL")
+    has_google_key = os.environ.get("GOOGLE_API_KEY")
+    has_gemini_model = os.environ.get("GEMINI_MODEL")
+    
+    if has_google_key and not has_gemini_model:
         console.print(
-            "[bold red]Please set your OpenAI or Anthropic API key in your environment variables. Or, alternatively, specify an Ollama model name.[/bold red]"
+            "[bold yellow]Warning: GOOGLE_API_KEY is set but GEMINI_MODEL is missing. Using default model.[/bold yellow]"
+        )
+    
+    if not (has_openai or has_anthropic or has_ollama or has_google_key):
+        console.print(
+            "[bold red]Please set your OpenAI, Anthropic, or Google API key in your environment variables. Or, alternatively, specify an Ollama model name.[/bold red]"
         )
         return
 
