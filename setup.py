@@ -11,7 +11,7 @@ if sys.version_info[:3] < (3, 0, 0):
 
 setup(
     name="wut-cli",
-    version="1.0.6",
+    version="1.0.7",
     description="CLI that explains the output of your last command",
     url="https://github.com/shobrook/wut",
     author="shobrook",

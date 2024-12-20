@@ -135,7 +135,7 @@ def get_pane_output() -> str:
             else:
                 return ""
 
-            with open(output_file, "r") as f:
+            with open(output_file, "r", encoding="utf-8", errors="replace") as f:
                 output = f.read()
     except CalledProcessError as e:
         pass
