@@ -29,11 +29,18 @@ On other systems, you can install using pip:
 > pipx install wut-cli
 ``` -->
 
-Once installed, you can use OpenAI or Claude as your LLM provider. Just add the appropriate API key to your environment:
+Once installed, you can use OpenAI, Claude, or Google's Gemini as your LLM provider. Just add the appropriate API key to your environment:
 
 ```bash
 > export OPENAI_API_KEY="..."
 > export ANTHROPIC_API_KEY="..."
+> export GOOGLE_API_KEY="..."
+```
+
+You can also specify the model you want to use with Google's Gemini:
+
+```bash
+> export GEMINI_MODEL="..."
 ```
 
 You can customize your OpenAI model and base url by adding the following to your environment:

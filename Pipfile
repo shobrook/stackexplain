@@ -7,8 +7,10 @@ name = "pypi"
 psutil = "*"
 tiktoken = "*"
 openai = "*"
-rich = "*"
 anthropic = "*"
+google-genai = "*"
+setuptools = "*"
+rich = "*"
 
 [dev-packages]
 
