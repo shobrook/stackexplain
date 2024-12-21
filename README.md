@@ -49,6 +49,13 @@ If you're using OpenAI, you can customize your model and API URL by adding the f
 > export OPENAI_BASE_URL="..." # Default to None
 ```
 
+If you're using Ollama, you can customize your endpoint and model by adding the following to your environment:
+
+```bash
+> export OLLAMA_ENDPOINT="..." # Default to "http://localhost:11434"
+> export OLLAMA_MODEL="..." # Default to None
+```
+
 ## Usage
 
 `wut` must be used inside a `tmux` or `screen` session to capture the last command's output. To use it, just type `wut` after running a command:
