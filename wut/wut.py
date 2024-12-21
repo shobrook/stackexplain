@@ -6,18 +6,18 @@ import argparse
 from rich.console import Console
 
 # Local
-from wut.utils import (
-    get_shell,
-    get_terminal_context,
-    explain,
-)
-
-# from utils import (
-#     get_shell,
-#     get_terminal_context,
-#     explain,
-# )
-
+try:
+    from wut.utils import (
+        get_shell,
+        get_terminal_context,
+        explain,
+    )
+except ImportError:
+    from utils import ( # type: ignore
+        get_shell,
+        get_terminal_context,
+        explain,
+    )
 
 def main():
     parser = argparse.ArgumentParser(
@@ -52,7 +52,7 @@ def main():
             and not os.environ.get("OLLAMA_MODEL", None)
         ):
             console.print(
-                "[bold red]Please set your OpenAI or Anthropic API key in your environment variables. Or, alternatively, specify an Ollama model name.[/bold red]"
+                "[bold red]Please set your OpenAI or Anthropic API key in your environment variables. Or, alternatively, specify an Ollama model name and if necessary an Ollama host.[/bold red]"
             )
             return
 
