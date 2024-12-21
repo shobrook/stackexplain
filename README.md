@@ -77,6 +77,27 @@ If you have a _specific question_ about your last command, you can include a que
 > wut "how do i add this to my PATH variable?"
 ```
 
+### Automatic `screen` startup in `.zshrc`
+
+To automatically start `screen` in a new terminal window using `.zshrc`, add the following code to your `.zshrc` file:
+
+```zsh
+if [[ -z $STY ]]; then
+    autoload -Uz add-zsh-hook
+    add-zsh-hook -U precmd () {
+        if [[ -z $STY ]]; then
+            screen
+        fi
+    }
+fi
+```
+
+Additionally, add the following to your `~/.screenrc` file to disable the startup message:
+
+```
+startup_message off
+```
+
 ## Roadmap
 
 1. [If possible,](https://stackoverflow.com/questions/24283097/reusing-output-from-last-command-in-bash/75629157#75629157) drop the requirement of being inside a tmux or screen session.
