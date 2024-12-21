@@ -41,9 +41,9 @@ def main():
 
     with console.status("[bold green]Trying my best..."):
         # Ensure environment is set up correctly
-        if not os.environ.get("TMUX") and not os.environ.get("STY"):
+        if not os.environ.get("TMUX") and not os.environ.get("STY") and not os.environ.get("ZELLIJ"):
             console.print(
-                "[bold red]wut must be run inside a tmux or screen session.[/bold red]"
+                "[bold red]wut must be run inside a tmux, screen, or Zellij session.[/bold red]"
             )
             return
         if (
